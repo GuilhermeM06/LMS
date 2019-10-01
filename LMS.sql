@@ -1,3 +1,11 @@
+/*
+Brando de Oliveira Veridiano, 1901003
+Guilherme Alves dos Santos, 1900785
+Guilherme Marques D'Albuquerque Silva, 1900823
+Hadnan Basilio, 1901020
+Victor Sanches Barbosa, 
+*/
+
 create TABLE Usuario
 (ID tinyint identity(1,1),
 Login varchar(10) not null,
@@ -32,3 +40,42 @@ constraint ukEmailAluno unique(Email),
 constraint ukCelularAluno unique(Celular),
 constraint fkIdUsuarioAluno foreign key(id_usuario)
 references Usuario(ID)); 
+
+create table Professor (
+ID tinyint identity,
+id_usuario tinyint,
+Email varchar(50) NOT NULL,
+Celular tinyint NOT NULL,
+Apelido varchar(10),
+constraint pkIdProfessor primary key (ID),
+constraint ukEmailProfessor unique (Email),
+constraint ukCelularProfessor unique (Celular),
+constraint fkIdUsuarioProfessor foreign key (id_usuario) references Usuario(ID)
+);
+
+create table Disciplina (
+ID tinyint identity,
+Nome varchar(50) NOT NULL,
+DataDisciplina date,
+StatusDisciplina varchar(7) NOT NULL,
+PlanoDeEnsino varchar(),
+CargaHoraria tinyint NOT NULL,
+Competencias varchar(),
+Habilidades varchar(),
+Ementa varchar(),
+ConteudoProgramatico varchar(),
+BibliografiaBasica varchar(),
+BibliografiaComplementar varchar(),
+PercentualPratico tinyint,
+PercentualTeorico tinyint,
+IdCoordenador tinyint,
+constraint pkDisciplina primary key (ID),
+constraint ukNomeDisciplina unique (Nome),
+constraint fkIdCoordenadorDisciplina foreign key (IdCoordenador) references Coordenador(id),
+DataDisciplina date constraint dfDataDisciplina default (getdate()),
+StatusDisciplina varchar(7) constraint dfStatusDisciplina default ('Aberta'),
+constraint ckStatusDisciplina check (StatusDisciplina = 'Aberta' or StatusDisciplina = 'Fechada'),
+constraint ckCargaHoraria check (CargaHoraria = 40 or CargaHoraria = 80),
+constraint ckPercentualPratico check (PercentualPratico >= 0 and PercentualPratico <= 100)
+constraint ckPercentualTeorico check (PercentualTeorico >= 0 and PercentualTeorico <= 100)
+);
