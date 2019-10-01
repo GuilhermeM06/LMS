@@ -77,3 +77,9 @@ constraint ckCargaHoraria check (CargaHoraria = 40 or CargaHoraria = 80),
 constraint ckPercentualPratico check (PercentualPratico >= 0 and PercentualPratico <= 100),
 constraint ckPercentualTeorico check (PercentualTeorico >= 0 and PercentualTeorico <= 100)
 );
+
+create table Curso(
+ID tinyint identity,
+Nome varchar(50) NOT NULL,
+constraint ukNomeCurso unique (Nome)
+); 
