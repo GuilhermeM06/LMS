@@ -208,6 +208,24 @@ CONSTRAINT ckNotaEntrega CHECK (Nota BETWEEN 0.00 AND 10.00);
 
 GO
 
+CREATE TABLE Mensagem(
+ID TINYINT identity,
+IdAluno TINYINT NOT NULL,
+IdProfessor TINYINT NOT NULL,
+Assunto VARCHAR(50) NOT NULL,
+Referencia VARCHAR(50) NOT NULL,
+Conteudo varchar(100) NOT NULL,
+[Status] varchar(10) CONSTRAINT dfStatusMensagem DEFAULT ‘Enviado’ not null,
+CONSTRAINT pkIdMensagem PRIMARY KEY (ID),
+CONSTRAINT fkIdAlunoMensagem FOREING KEY(idAluno) REFERENCES Aluno(ID),
+CONSTRAINT fkIdProfessorMensagem FOREING KEY(idProfessor) REFERENCES Professor(ID)
+CONSTRAINT ckStatusMensagem CHECK ([Status] in ('Enviado', 'Lido','Respondido'))
+DtEnvio DATE CONSTRAINT dfDtEnvioMensagem DEFAULT (getdate()) NOT NULL,
+DtResposta DATE not null,
+Resposta varchar(50) not null);
+
+GO
+
 --Ao realizar uma entrega, devo informar o aluno e qual atividade vinculada ( por referência indireta sei
 --qual a atividade e a disciplina ofertada ).
 
