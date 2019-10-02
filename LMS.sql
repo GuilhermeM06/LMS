@@ -52,7 +52,7 @@ Apelido VARCHAR(10),
 CONSTRAINT pkIdProfessor PRIMARY KEY(ID),
 CONSTRAINT ukEmailProfessor UNIQUE(Email),
 CONSTRAINT ukCelularProfessor UNIQUE(Celular),
-CONSTRAINT fkIdUsuarioProfessor FOREING KEY(id_usuario) REFERENCES Usuario(ID)
+CONSTRAINT fkIdUsuarioProfessor FOREIGN KEY(id_usuario) REFERENCES Usuario(ID)
 );
 GO
 
@@ -98,7 +98,7 @@ DtFimMatricula DATE,
 IdDisciplina TINYINT NOT NULL,
 IdCurso TINYINT NOT NULL,
 Ano SMALLINT NOT NULl, 
-Semestre TYNIINT NOT NULL,
+Semestre TINYINT NOT NULL,
 Turma CHAR(1) NOT NULL,
 IdProfessor TINYINT,
 Metodologia VARCHAR(100),
@@ -127,7 +127,7 @@ CONSTRAINT pkID PRIMARY KEY (ID),
 CONSTRAINT fkIdAluno FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
 CONSTRAINT fkIdDisciplinaOfertada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
 CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
-CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada')
+CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada'));
 
 GO
 
@@ -148,7 +148,7 @@ CONSTRAINT pkID PRIMARY KEY (ID),
 CONSTRAINT fkIdAluno FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
 CONSTRAINT fkIdDisciplinaOfertada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
 CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
-CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada')
+CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada'));
 
 GO
 
@@ -197,14 +197,14 @@ DtEntrega				DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
 IdProfessor				TINYINT,
 Nota					INT,	
 DtAvaliacao				DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
-Obs						VARCHAR(MAX),	
 
+Obs						VARCHAR(MAX),	
 CONSTRAINT pkIDEntrega PRIMARY KEY (ID),
 CONSTRAINT fkIdAlunoEntrega FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
 CONSTRAINT fkIdAtividadeVinculadaEntrega FOREIGN KEY (IdAtividadeVinculada) REFERENCES Atividade (ID),
-CONSTRAINT ckStatusEntrega CHECK ([Status] IN ('Entregue','Corrigido')
+CONSTRAINT ckStatusEntrega CHECK ([Status] IN ('Entregue','Corrigido')),
 CONSTRAINT fkIdProfessorEntrega FOREIGN KEY (IdProfessor) REFERENCES Professor (ID),
-CONSTRAINT ckNotaEntrega CHECK (Nota BETWEEN 0.00 AND 10.00);
+CONSTRAINT ckNotaEntrega CHECK (Nota BETWEEN 0.00 AND 10.00));
 
 GO
 
@@ -215,11 +215,11 @@ IdProfessor TINYINT NOT NULL,
 Assunto VARCHAR(50) NOT NULL,
 Referencia VARCHAR(50) NOT NULL,
 Conteudo varchar(100) NOT NULL,
-[Status] varchar(10) CONSTRAINT dfStatusMensagem DEFAULT ‘Enviado’ not null,
+[Status] varchar(10) CONSTRAINT dfStatusMensagem DEFAULT 'Enviado' not null,
 CONSTRAINT pkIdMensagem PRIMARY KEY (ID),
-CONSTRAINT fkIdAlunoMensagem FOREING KEY(idAluno) REFERENCES Aluno(ID),
-CONSTRAINT fkIdProfessorMensagem FOREING KEY(idProfessor) REFERENCES Professor(ID)
-CONSTRAINT ckStatusMensagem CHECK ([Status] in ('Enviado', 'Lido','Respondido'))
+CONSTRAINT fkIdAlunoMensagem FOREiGN KEY(idAluno) REFERENCES Aluno(ID),
+CONSTRAINT fkIdProfessorMensagem FOREIGN KEY(idProfessor) REFERENCES Professor(ID),
+CONSTRAINT ckStatusMensagem CHECK ([Status] in ('Enviado', 'Lido','Respondido')),
 DtEnvio DATE CONSTRAINT dfDtEnvioMensagem DEFAULT (getdate()) NOT NULL,
 DtResposta DATE not null,
 Resposta varchar(50) not null);
@@ -236,3 +236,4 @@ GO
 
 --1 Mesmo aluno não pode responder a mesma
 --atividade vinculada mais de uma vez.
+
