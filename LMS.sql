@@ -5,15 +5,14 @@ Guilherme Marques D'Albuquerque Silva, 1900823
 Hadnan Basilio, 1901020
 Victor Sanches Barbosa, 1900982
 */
-BEGIN TRAN
 
 CREATE TABLE Usuario
 (ID TINYINT IDENTITY(1,1),
 Login VARCHAR(10) NOT NULL,
 Senha VARCHAR(10) NOT NULL,
 DtExpiracao DATE CONSTRAINT dfDataVenda DEFAULT ('1900-01-01'),
-CONSTRAINT pkId PRIMARY KEY(ID),
-CONSTRAINT ukLogin UNIQUE(login));
+CONSTRAINT pkIDUsuario PRIMARY KEY(ID),
+CONSTRAINT ukLoginUsuario UNIQUE(login));
 GO
 
 CREATE TABLE Coordenador
@@ -21,11 +20,11 @@ CREATE TABLE Coordenador
 id_usuario TINYINT,
 Nome VARCHAR(50) NOT NULL,
 Email VARCHAR(50) NOT NULL, 
-Celular TINYINT NOT NULL,
-CONSTRAINT pkIdCoordenador PRIMARY KEY(ID),
-CONSTRAINT ukEmail UNIQUE(Email),
-CONSTRAINT ukCelular UNIQUE(Celular),
-CONSTRAINT fkIdUsuario FOREIGN KEY(id_usuario)
+Celular CHAR(11) NOT NULL,
+CONSTRAINT pkIDCoordenador PRIMARY KEY(ID),
+CONSTRAINT ukEmailCoordenador UNIQUE(Email),
+CONSTRAINT ukCelularCoordenador UNIQUE(Celular),
+CONSTRAINT fkid_usuarioCoordenador FOREIGN KEY(id_usuario)
 REFERENCES Usuario(ID)); 
 GO
 
@@ -34,13 +33,13 @@ CREATE TABLE Aluno
 id_usuario TINYINT,
 Nome VARCHAR(50)NOT NULL,
 Email VARCHAR(50) NOT NULL, 
-Celular TINYINT NOT NULL,
+Celular CHAR(11) NOT NULL,
 RA CHAR(7) NOT NULL,
 Foto VARCHAR(100), 
-CONSTRAINT pkIdAluno PRIMARY KEY(ID),
+CONSTRAINT pkIDAluno PRIMARY KEY(ID),
 CONSTRAINT ukEmailAluno UNIQUE(Email),
 CONSTRAINT ukCelularAluno UNIQUE(Celular),
-CONSTRAINT fkIdUsuarioAluno FOREIGN KEY(id_usuario)
+CONSTRAINT fkid_usuarioAluno FOREIGN KEY(id_usuario)
 REFERENCES Usuario(ID)); 
 GO
 
@@ -48,38 +47,38 @@ CREATE TABLE Professor (
 ID TINYINT IDENTITY,
 id_usuario TINYINT,
 Email VARCHAR(50) NOT NULL,
-Celular TINYINT NOT NULL,
-Apelido VARCHAR(10),
-CONSTRAINT pkIdProfessor PRIMARY KEY(ID),
+Celular CHAR(11) NOT NULL,
+Apelido VARCHAR(10) NOT NULL,
+CONSTRAINT pkIDProfessor PRIMARY KEY(ID),
 CONSTRAINT ukEmailProfessor UNIQUE(Email),
 CONSTRAINT ukCelularProfessor UNIQUE(Celular),
-CONSTRAINT fkIdUsuarioProfessor FOREIGN KEY(id_usuario) REFERENCES Usuario(ID)
+CONSTRAINT fkid_usuarioProfessor FOREIGN KEY(id_usuario) REFERENCES Usuario(ID)
 );
 GO
 
 CREATE TABLE Disciplina (
 ID TINYINT IDENTITY,
 Nome VARCHAR(50) NOT NULL,
-DataDisciplina DATE CONSTRAINT dfDataDisciplina DEFAULT getdate(),
-StatusDisciplina VARCHAR(7) NOT NULL CONSTRAINT dfStatusDisciplina DEFAULT 'Aberta',
-PlanoDeEnsino VARCHAR(100),
+DataDisciplina DATE CONSTRAINT dfDataDisciplina DEFAULT (GETDATE()) NOT NULL,
+StatusDisciplina VARCHAR(7) NOT NULL CONSTRAINT dfStatusDisciplina DEFAULT ('Aberta'),
+PlanoDeEnsino VARCHAR(100) NOT NULL,
 CargaHoraria TINYINT NOT NULL,
-Competencias VARCHAR(100),
-Habilidades VARCHAR(100),
-Ementa VARCHAR(100),
-ConteudoProgramatico VARCHAR(100),
-BibliografiaBasica VARCHAR(100),
-BibliografiaComplementar VARCHAR(100),
-PercentualPratico TINYINT,
-PercentualTeorico TINYINT,
-IdCoordenador TINYINT,
-CONSTRAINT pkDisciplina PRIMARY KEY(ID), 
+Competencias VARCHAR(100) NOT NULL,
+Habilidades VARCHAR(100) NOT NULL,
+Ementa VARCHAR(100) NOT NULL,
+ConteudoProgramatico VARCHAR(100) NOT NULL,
+BibliografiaBasica VARCHAR(100) NOT NULL,
+BibliografiaComplementar VARCHAR(100) NOT NULL,
+PercentualPratico TINYINT NOT NULL,
+PercentualTeorico TINYINT NOT NULL,
+IdCoordenador TINYINT NOT NULL,
+CONSTRAINT pkIDDisciplina PRIMARY KEY(ID), 
 CONSTRAINT ukNomeDisciplina UNIQUE(Nome),
 CONSTRAINT fkIdCoordenadorDisciplina FOREIGN KEY(IdCoordenador) REFERENCES Coordenador(ID),
-CONSTRAINT ckStatusDisciplina CHECK (StatusDisciplina = 'Aberta' OR StatusDisciplina = 'Fechada'),
-CONSTRAINT ckCargaHoraria CHECK (CargaHoraria = 40 OR CargaHoraria = 80),
-CONSTRAINT ckPercentualPratico CHECK (PercentualPratico BETWEEN 0 AND  100),
-CONSTRAINT ckPercentualTeorico CHECK (PercentualTeorico BETWEEN 0 AND 100)
+CONSTRAINT ckStatusDisciplinaDisciplina CHECK (StatusDisciplina IN ('Aberta','Fechada')),
+CONSTRAINT ckCargaHorariaDisciplina CHECK (CargaHoraria = 40 OR CargaHoraria = 80),
+CONSTRAINT ckPercentualPraticoDisciplina CHECK (PercentualPratico BETWEEN 0 AND 100),
+CONSTRAINT ckPercentualTeoricoDisciplina CHECK (PercentualTeorico BETWEEN 0 AND 100)
 );
 GO
 
@@ -87,7 +86,7 @@ CREATE TABLE Curso (
 ID TINYINT IDENTITY,
 Nome VARCHAR(50) NOT NULL,
 CONSTRAINT ukNomeCurso UNIQUE(Nome),
-CONSTRAINT pkIdCurso PRIMARY KEY(ID)
+CONSTRAINT pkIDCurso PRIMARY KEY(ID)
 );
 GO 
 
@@ -106,24 +105,24 @@ Metodologia VARCHAR(100),
 Recursos VARCHAR(100),
 CriterioAvaliacao VARCHAR(100),
 PlanoDeAulas VARCHAR(100)
-CONSTRAINT pkIdDisciplinaOfertada PRIMARY KEY (ID),
-CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador(ID),
-CONSTRAINT fkIdDisciplina FOREIGN KEY (idDisciplina) REFERENCES Disciplina (ID),
-CONSTRAINT fkIdCurso FOREIGN KEY (IdCurso) REFERENCES Curso (ID),
-CONSTRAINT idProfessor FOREIGN KEY (IdProfessor) REFERENCES Professor (ID),
-CONSTRAINT ckAno CHECK (Ano BETWEEN 1900 AND 2100),
-CONSTRAINT ckSemestre CHECK (Semestre = 1 OR Semestre = 2), 
-CONSTRAINT cKTurma CHECK (Turma LIKE '[A-Z]'));
+CONSTRAINT pkIDDisciplinaOfertada PRIMARY KEY (ID),
+CONSTRAINT fkIdCoordenadorDisciplinaOfertada FOREIGN KEY (IdCoordenador) REFERENCES Coordenador(ID),
+CONSTRAINT fkIdDisciplinaDisciplinaOfertada FOREIGN KEY (idDisciplina) REFERENCES Disciplina (ID),
+CONSTRAINT fkIdCursoDisciplinaOfertada FOREIGN KEY (IdCurso) REFERENCES Curso (ID),
+CONSTRAINT fkidProfessorDisciplinaOfertada FOREIGN KEY (IdProfessor) REFERENCES Professor (ID),
+CONSTRAINT ckAnoDisciplinaOfertada CHECK (Ano BETWEEN 1900 AND 2100),
+CONSTRAINT ckSemestreDisciplinaOfertada CHECK (Semestre = 1 OR Semestre = 2), 
+CONSTRAINT cKTurmaDisciplinaOfertada CHECK (Turma LIKE '[A-Z]'));
 GO
 
 CREATE TABLE SolicitacaoMatricula
 (
 ID						TINYINT IDENTITY, 
-IdAluno					TINYINT,				 
-IdDisciplinaOfertada	TINYINT,				 
-DtSolicitacao			DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
-IdCoordenador			TINYINT NULL,				 			 
-[Status]				VARCHAR(10)	NOT NULL CONSTRAINT dfDtStatus DEFAULT 'Solicitada',
+IdAluno					TINYINT NOT NULL,				 
+IdDisciplinaOfertada	TINYINT NOT NULL,				 
+DtSolicitacao			DATE	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
+IdCoordenador			TINYINT,				 			 
+[Status]				VARCHAR(10)	CONSTRAINT dfDtStatus DEFAULT 'Solicitada',
 CONSTRAINT pkIDSolicitacaoMatricula PRIMARY KEY (ID),
 CONSTRAINT fkIdAlunoSolicitacaoMatricula FOREIGN KEY (IdAluno) REFERENCES Aluno (ID),
 CONSTRAINT fkIdDisciplinaOfertadaSolicitacaoMatricula FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
@@ -133,22 +132,16 @@ CONSTRAINT ckStatusSolicitacaoMatricula CHECK ([Status] IN ('Solicitada', 'Aprov
 
 GO
 
---• IdCoordenador não é obrigatório de ser preenchido no momento da solicitação de matricula, porém,
---quando o coordenador aprová-la ( ie:alterar o status da mesma ), seu ID deve ser preenchido.
---Eventualmente o professor daquela disciplina pode alterar o status para Cancelada.
-
-
-
 CREATE TABLE Atividade
 (
 ID TINYINT IDENTITY,
-Titulo VARCHAR(15),
+Titulo VARCHAR(15) NOT NULL,
 Descricao VARCHAR (100),
-Conteudo VARCHAR (100),
-Tipo VARCHAR(15),
+Conteudo VARCHAR (100) NOT NULL,
+Tipo VARCHAR(15) NOT NULL,
 Extras VARCHAR(100),
-IdProfessor TINYINT, 
-CONSTRAINT pkIdAtividade PRIMARY KEY (ID),
+IdProfessor TINYINT NOT NULL,
+CONSTRAINT pkIDAtividade PRIMARY KEY (ID),
 CONSTRAINT ukTituloAtividade UNIQUE (Titulo),
 CONSTRAINT ckTipoAtividade CHECK (Tipo IN ('Resposta Aberta', 'Teste')),
 CONSTRAINT fkIdProfessorAtividade FOREIGN KEY (IdProfessor) REFERENCES Professor(ID)
@@ -157,14 +150,14 @@ GO
 
 CREATE TABLE AtividadeVinculada
 (ID TINYINT IDENTITY,
-IdAtividade TINYINT,
-IdProfessor	TINYINT,
-IdDisciplinaOfertada TINYINT,
+IdAtividade TINYINT NOT NULL,
+IdProfessor	TINYINT NOT NULL,
+IdDisciplinaOfertada TINYINT NOT NULL,
 Rotulo VARCHAR(4) NOT NULL,
 [Status] VARCHAR(15) NOT NULL,
 DtInicioRespostas DATE NOT NULL,
 DtFimRespostas DATE NOT NULL,
-CONSTRAINT pkAtividadeVinculada PRIMARY KEY (ID),
+CONSTRAINT pkIDAtividadeVinculada PRIMARY KEY (ID),
 CONSTRAINT fkIdAtividadeAtividadeVinculada FOREIGN KEY (IdAtividade) REFERENCES Atividade(ID),
 CONSTRAINT fkIdProfessorAtividadeVinculada FOREIGN KEY (IdProfessor) REFERENCES Professor(ID),
 CONSTRAINT fkIdDisciplinaOfertadaAtividadeVinculada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada(ID),
@@ -174,24 +167,23 @@ GO
 
 CREATE TABLE Entrega
 (
-ID						TINYINT IDENTITY, 
-IdAluno					TINYINT,				 
-IdAtividadeVinculada	TINYINT,
-Titulo					VARCHAR(MAX),
-Resposta				VARCHAR(MAX),				 
-DtEntrega				DATE		NOT NULL CONSTRAINT dfDtSolicitacaoEntrega DEFAULT (GETDATE()), 			 
-[Status]				VARCHAR(9)	NOT NULL CONSTRAINT dfDtStatusEntrega DEFAULT 'Entregue',
-IdProfessor				TINYINT,
-Nota					INT,	
-DtAvaliacao				DATE		NOT NULL CONSTRAINT dfDtAvaliacaoEntrega DEFAULT (GETDATE()),
-
-Obs						VARCHAR(MAX),	
-CONSTRAINT pkIDEntrega PRIMARY KEY (ID),
-CONSTRAINT fkIdAlunoEntrega FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
-CONSTRAINT fkIdAtividadeVinculadaEntrega FOREIGN KEY (IdAtividadeVinculada) REFERENCES Atividade (ID),
-CONSTRAINT ckStatusEntrega CHECK ([Status] IN ('Entregue','Corrigido')),
-CONSTRAINT fkIdProfessorEntrega FOREIGN KEY (IdProfessor) REFERENCES Professor (ID),
-CONSTRAINT ckNotaEntrega CHECK (Nota BETWEEN 0.00 AND 10.00));
+ID											TINYINT								IDENTITY, 
+IdAluno										TINYINT								NOT NULL,				 
+IdAtividadeVinculada						TINYINT								NOT NULL,
+Titulo										VARCHAR(100),
+Resposta									VARCHAR(100),								 
+DtEntrega									DATE								NOT NULL CONSTRAINT dfDtSolicitacaoEntrega DEFAULT (GETDATE()), 			 
+[Status]									VARCHAR(9)							NOT NULL CONSTRAINT dfDtStatusEntrega DEFAULT 'Entregue',
+IdProfessor									TINYINT,
+Nota										DECIMAL,	
+DtAvaliacao									DATE								CONSTRAINT dfDtAvaliacaoEntrega DEFAULT (GETDATE()),
+Obs											VARCHAR(100),	
+CONSTRAINT pkIDEntrega						PRIMARY KEY (ID),
+CONSTRAINT fkIdAlunoEntrega					FOREIGN KEY (idAluno)				REFERENCES Aluno (ID),
+CONSTRAINT fkIdAtividadeVinculadaEntrega	FOREIGN KEY (IdAtividadeVinculada)  REFERENCES Atividade (ID),
+CONSTRAINT ckStatusEntrega					CHECK								([Status] IN ('Entregue','Corrigido')),
+CONSTRAINT fkIdProfessorEntrega				FOREIGN KEY (IdProfessor)			REFERENCES Professor (ID),
+CONSTRAINT ckNotaEntrega					CHECK								(Nota BETWEEN 0.00 AND 10.00));
 
 GO
 
@@ -203,28 +195,11 @@ Assunto VARCHAR(50) NOT NULL,
 Referencia VARCHAR(50) NOT NULL,
 Conteudo varchar(100) NOT NULL,
 [Status] varchar(10) CONSTRAINT dfStatusMensagem DEFAULT 'Enviado' not null,
-CONSTRAINT pkIdMensagem PRIMARY KEY (ID),
+DtEnvio DATE CONSTRAINT dfDtEnvioMensagem DEFAULT (getdate()) NOT NULL,
+DtResposta DATE,
+Resposta varchar(50),
+CONSTRAINT pkIDMensagem PRIMARY KEY (ID),
 CONSTRAINT fkIdAlunoMensagem FOREiGN KEY(idAluno) REFERENCES Aluno(ID),
 CONSTRAINT fkIdProfessorMensagem FOREIGN KEY(idProfessor) REFERENCES Professor(ID),
-CONSTRAINT ckStatusMensagem CHECK ([Status] in ('Enviado', 'Lido','Respondido')),
-DtEnvio DATE CONSTRAINT dfDtEnvioMensagem DEFAULT (getdate()) NOT NULL,
-DtResposta DATE not null,
-Resposta varchar(50) not null);
-
+CONSTRAINT ckStatusMensagem CHECK ([Status] in ('Enviado', 'Lido','Respondido')));
 GO
-
---Ao realizar uma entrega, devo informar o aluno e qual atividade vinculada ( por referência indireta sei
---qual a atividade e a disciplina ofertada ).
-
---• Não preciso preencher os campos referentes à avaliação do professor, porém, quando este a
---realizar, devo preencher o IdProfessor, Nota, DtAvaliacao e [opcionalmente] o Obs;
-
---Além de alterar o status da Entrega para ‘Corrigido’.
-
---1 Mesmo aluno não pode responder a mesma
---atividade vinculada mais de uma vez.
-
-select*from Aluno
-
-ROLLBACK
-
