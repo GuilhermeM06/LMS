@@ -153,3 +153,19 @@ CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (I
 CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada')
 
 GO
+
+CREATE TABLE Atividade
+(
+ID TINYINT IDENTITY,
+Titulo VARCHAR(15),
+Descricao VARCHAR (100),
+Conteudo VARCHAR (100),
+Tipo VARCHAR(15),
+Extras VARCHAR(100),
+IdProfessor TINYINT, 
+CONSTRAINT pkIdAtividade PRIMARY KEY (ID),
+CONSTRAINT ukTituloAtividade UNIQUE (Titulo),
+CONSTRAINT ckTipoAtividade CHECK (Tipo IN ('Resposta Aberta', 'Teste')),
+CONSTRAINT fkIdProfessorAtividade FOREIGN KEY (IdProfessor) REFERENCES Professor(ID)
+);
+GO 
