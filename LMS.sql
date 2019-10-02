@@ -169,3 +169,20 @@ CONSTRAINT ckTipoAtividade CHECK (Tipo IN ('Resposta Aberta', 'Teste')),
 CONSTRAINT fkIdProfessorAtividade FOREIGN KEY (IdProfessor) REFERENCES Professor(ID)
 );
 GO 
+
+CREATE TABLE AtividadeVinculada
+(ID TINYINT IDENTITY,
+IdAtividade TINYINT,
+IdProfessor	TINYINT,
+IdDisciplinaOfertada TINYINT,
+Rotulo VARCHAR(4) NOT NULL,
+[Status] VARCHAR(15) NOT NULL,
+DtInicioRespostas DATE NOT NULL,
+DtFimRespostas DATE NOT NULL,
+CONSTRAINT pkAtividadeVinculada PRIMARY KEY (ID),
+CONSTRAINT fkIdAtividadeAtividadeVinculada FOREIGN KEY (IdAtividade) REFERENCES Atividade(ID),
+CONSTRAINT fkIdProfessorAtividadeVinculada FOREIGN KEY (IdProfessor) REFERENCES Professor(ID),
+CONSTRAINT fkIdDisciplinaOfertadaAtividadeVinculada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada(ID),
+CONSTRAINT ckRotulo CHECK (Rotulo in ('AC1', 'AC2', 'AC3','AC4', 'AC5', 'AC6','AC7', 'AC8', 'AC9', 'AC10')),
+CONSTRAINT ckStatus CHECK ([Status] in ('Disponibilizada', 'Aberta', 'Fechada', 'Prorrogada', 'Encerrada')));
+GO
