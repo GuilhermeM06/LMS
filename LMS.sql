@@ -5,6 +5,7 @@ Guilherme Marques D'Albuquerque Silva, 1900823
 Hadnan Basilio, 1901020
 Victor Sanches Barbosa, 1900982
 */
+BEGIN TRAN
 
 CREATE TABLE Usuario
 (ID TINYINT IDENTITY(1,1),
@@ -74,7 +75,7 @@ PercentualTeorico TINYINT,
 IdCoordenador TINYINT,
 CONSTRAINT pkDisciplina PRIMARY KEY(ID), 
 CONSTRAINT ukNomeDisciplina UNIQUE(Nome),
-CONSTRAINT fkIdCoordenadorDisciplina FOREIGN KEY(IdCoordenador) REFERENCES Coordenador(id),
+CONSTRAINT fkIdCoordenadorDisciplina FOREIGN KEY(IdCoordenador) REFERENCES Coordenador(ID),
 CONSTRAINT ckStatusDisciplina CHECK (StatusDisciplina = 'Aberta' OR StatusDisciplina = 'Fechada'),
 CONSTRAINT ckCargaHoraria CHECK (CargaHoraria = 40 OR CargaHoraria = 80),
 CONSTRAINT ckPercentualPratico CHECK (PercentualPratico BETWEEN 0 AND  100),
@@ -122,12 +123,13 @@ IdAluno					TINYINT,
 IdDisciplinaOfertada	TINYINT,				 
 DtSolicitacao			DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
 IdCoordenador			TINYINT NULL,				 			 
-[Status]				VARCHAR(10)	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT 'Solicitada',
-CONSTRAINT pkID PRIMARY KEY (ID),
-CONSTRAINT fkIdAluno FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
-CONSTRAINT fkIdDisciplinaOfertada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
-CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
-CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada'));
+[Status]				VARCHAR(10)	NOT NULL CONSTRAINT dfDtStatus DEFAULT 'Solicitada',
+CONSTRAINT pkIDSolicitacaoMatricula PRIMARY KEY (ID),
+CONSTRAINT fkIdAlunoSolicitacaoMatricula FOREIGN KEY (IdAluno) REFERENCES Aluno (ID),
+CONSTRAINT fkIdDisciplinaOfertadaSolicitacaoMatricula FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
+CONSTRAINT fkIdCoordenadorSolicitacaoMatricula FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
+CONSTRAINT ckStatusSolicitacaoMatricula CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada'))
+);
 
 GO
 
@@ -136,21 +138,6 @@ GO
 --Eventualmente o professor daquela disciplina pode alterar o status para Cancelada.
 
 
-CREATE TABLE SolicitacaoMatricula
-(
-ID						TINYINT IDENTITY, 
-IdAluno					TINYINT,				 
-IdDisciplinaOfertada	TINYINT,				 
-DtSolicitacao			DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
-IdCoordenador			TINYINT NULL,				 			 
-[Status]				VARCHAR(10)	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT 'Solicitada',
-CONSTRAINT pkID PRIMARY KEY (ID),
-CONSTRAINT fkIdAluno FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
-CONSTRAINT fkIdDisciplinaOfertada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
-CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
-CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada'));
-
-GO
 
 CREATE TABLE Atividade
 (
@@ -192,11 +179,11 @@ IdAluno					TINYINT,
 IdAtividadeVinculada	TINYINT,
 Titulo					VARCHAR(MAX),
 Resposta				VARCHAR(MAX),				 
-DtEntrega				DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()), 			 
-[Status]				VARCHAR(9)	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT 'Entregue',
+DtEntrega				DATE		NOT NULL CONSTRAINT dfDtSolicitacaoEntrega DEFAULT (GETDATE()), 			 
+[Status]				VARCHAR(9)	NOT NULL CONSTRAINT dfDtStatusEntrega DEFAULT 'Entregue',
 IdProfessor				TINYINT,
 Nota					INT,	
-DtAvaliacao				DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
+DtAvaliacao				DATE		NOT NULL CONSTRAINT dfDtAvaliacaoEntrega DEFAULT (GETDATE()),
 
 Obs						VARCHAR(MAX),	
 CONSTRAINT pkIDEntrega PRIMARY KEY (ID),
@@ -236,4 +223,8 @@ GO
 
 --1 Mesmo aluno não pode responder a mesma
 --atividade vinculada mais de uma vez.
+
+select*from Aluno
+
+ROLLBACK
 
