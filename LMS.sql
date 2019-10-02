@@ -13,6 +13,7 @@ Senha varchar(10) not null,
 DtExpiracao DATE CONSTRAINT dfDataVenda DEFAULT ('1900-01-01'),
 CONSTRAINT pkId primary key(ID),
 constraint ukLogin unique(login));
+GO
 
 create table Coordenador
 (ID tinyint identity,
@@ -26,6 +27,8 @@ constraint ukCelular unique(Celular),
 constraint fkIdUsuario foreign key(id_usuario)
 references Usuario(ID)); 
  select * from Coordenador
+GO
+
 
 create table Aluno
 (ID tinyint identity,
@@ -40,6 +43,7 @@ constraint ukEmailAluno unique(Email),
 constraint ukCelularAluno unique(Celular),
 constraint fkIdUsuarioAluno foreign key(id_usuario)
 references Usuario(ID)); 
+GO
 
 create table Professor (
 ID tinyint identity,
@@ -52,6 +56,7 @@ constraint ukEmailProfessor unique (Email),
 constraint ukCelularProfessor unique (Celular),
 constraint fkIdUsuarioProfessor foreign key (id_usuario) references Usuario(ID)
 );
+GO
 
 create table Disciplina (
 ID tinyint identity,
@@ -77,13 +82,15 @@ constraint ckCargaHoraria check (CargaHoraria = 40 or CargaHoraria = 80),
 constraint ckPercentualPratico check (PercentualPratico >= 0 and PercentualPratico <= 100),
 constraint ckPercentualTeorico check (PercentualTeorico >= 0 and PercentualTeorico <= 100)
 );
+GO
 
 create table Curso(
 ID tinyint identity,
 Nome varchar(50) NOT NULL,
 constraint ukNomeCurso unique (Nome),
 CONSTRAINT pkIdCurso PRIMARY KEY (ID)
-); 
+);
+GO 
 
 create table DisciplinaOfertada
 (ID tinyint identity,
@@ -108,3 +115,41 @@ CONSTRAINT idProfessor FOREIGN KEY (IdProfessor) REFERENCES Professor (ID),
 CONSTRAINT ckAno CHECK (Ano Between 1900 and 2100),
 CONSTRAINT ckSemestre CHECK (Semestre = 1 or Semestre = 2), 
 CONSTRAINT cKTurma CHECK (Turma like '[A-Z]'));
+GO
+
+CREATE TABLE SolicitacaoMatricula
+(
+ID						TINYINT IDENTITY, 
+IdAluno					TINYINT,				 
+IdDisciplinaOfertada	TINYINT,				 
+DtSolicitacao			DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
+IdCoordenador			TINYINT NULL,				 			 
+[Status]				VARCHAR(10)	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT 'Solicitada',
+CONSTRAINT pkID PRIMARY KEY (ID),
+CONSTRAINT fkIdAluno FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
+CONSTRAINT fkIdDisciplinaOfertada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
+CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
+CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada')
+
+GO
+
+--• IdCoordenador não é obrigatório de ser preenchido no momento da solicitação de matricula, porém,
+--quando o coordenador aprová-la ( ie:alterar o status da mesma ), seu ID deve ser preenchido.
+--Eventualmente o professor daquela disciplina pode alterar o status para Cancelada.
+
+
+CREATE TABLE SolicitacaoMatricula
+(
+ID						TINYINT IDENTITY, 
+IdAluno					TINYINT,				 
+IdDisciplinaOfertada	TINYINT,				 
+DtSolicitacao			DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
+IdCoordenador			TINYINT NULL,				 			 
+[Status]				VARCHAR(10)	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT 'Solicitada',
+CONSTRAINT pkID PRIMARY KEY (ID),
+CONSTRAINT fkIdAluno FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
+CONSTRAINT fkIdDisciplinaOfertada FOREIGN KEY (IdDisciplinaOfertada) REFERENCES DisciplinaOfertada (ID),
+CONSTRAINT fkIdCoordenador FOREIGN KEY (IdCoordenador) REFERENCES Coordenador (ID),
+CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'Cancelada')
+
+GO
