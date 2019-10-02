@@ -133,8 +133,8 @@ CONSTRAINT ckStatus CHECK ([Status] IN ('Solicitada', 'Aprovada','Rejeitada', 'C
 
 GO
 
---� IdCoordenador n�o � obrigat�rio de ser preenchido no momento da solicita��o de matricula, por�m,
---quando o coordenador aprov�-la ( ie:alterar o status da mesma ), seu ID deve ser preenchido.
+--• IdCoordenador não é obrigatório de ser preenchido no momento da solicitação de matricula, porém,
+--quando o coordenador aprová-la ( ie:alterar o status da mesma ), seu ID deve ser preenchido.
 --Eventualmente o professor daquela disciplina pode alterar o status para Cancelada.
 
 
@@ -186,3 +186,37 @@ CONSTRAINT fkIdDisciplinaOfertadaAtividadeVinculada FOREIGN KEY (IdDisciplinaOfe
 CONSTRAINT ckRotulo CHECK (Rotulo in ('AC1', 'AC2', 'AC3','AC4', 'AC5', 'AC6','AC7', 'AC8', 'AC9', 'AC10')),
 CONSTRAINT ckStatus CHECK ([Status] in ('Disponibilizada', 'Aberta', 'Fechada', 'Prorrogada', 'Encerrada')));
 GO
+
+CREATE TABLE Entrega
+(
+ID						TINYINT IDENTITY, 
+IdAluno					TINYINT,				 
+IdAtividadeVinculada	TINYINT,
+Titulo					VARCHAR(MAX),
+Resposta				VARCHAR(MAX),				 
+DtEntrega				DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()), 			 
+[Status]				VARCHAR(9)	NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT 'Entregue',
+IdProfessor				TINYINT,
+Nota					INT,	
+DtAvaliacao				DATE		NOT NULL CONSTRAINT dfDtSolicitacao DEFAULT (GETDATE()),
+Obs						VARCHAR(MAX),	
+
+CONSTRAINT pkIDEntrega PRIMARY KEY (ID),
+CONSTRAINT fkIdAlunoEntrega FOREIGN KEY (idAluno) REFERENCES Aluno (ID),
+CONSTRAINT fkIdAtividadeVinculadaEntrega FOREIGN KEY (IdAtividadeVinculada) REFERENCES Atividade (ID),
+CONSTRAINT ckStatusEntrega CHECK ([Status] IN ('Entregue','Corrigido')
+CONSTRAINT fkIdProfessorEntrega FOREIGN KEY (IdProfessor) REFERENCES Professor (ID),
+CONSTRAINT ckNotaEntrega CHECK (Nota BETWEEN 0.00 AND 10.00);
+
+GO
+
+--Ao realizar uma entrega, devo informar o aluno e qual atividade vinculada ( por referência indireta sei
+--qual a atividade e a disciplina ofertada ).
+
+--• Não preciso preencher os campos referentes à avaliação do professor, porém, quando este a
+--realizar, devo preencher o IdProfessor, Nota, DtAvaliacao e [opcionalmente] o Obs;
+
+--Além de alterar o status da Entrega para ‘Corrigido’.
+
+--1 Mesmo aluno não pode responder a mesma
+--atividade vinculada mais de uma vez.
